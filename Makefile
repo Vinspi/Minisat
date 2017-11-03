@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -std=c99 -w -Wall
 
 all: graphToSat
-	./graphToSat graph1 2 && cat instance_sat.in
+	./graphToSat ../Benchs/myciel4 10
 
 util.o : util.c
 	$(CC) -o util.o -c util.c $(CFLAGS)

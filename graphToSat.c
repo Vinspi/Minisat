@@ -22,6 +22,10 @@ int main(int argc, char const *argv[]) {
   return 0;
 }
 
+
+
+
+
 /*
   on défini la formule suivante :
   num_var_prop = k*num_sommet + num_couleur + 1
@@ -31,8 +35,56 @@ int var_prop(int k, int sommet, int couleur){
   return k*sommet+couleur+1;
 }
 
+void combinaison_lineaire_recursive(int tab[],int k,int n, int max, FILE *f,int *nb_clause){
+
+  int sum=0;
+  for(int i=0;i<n;i++){
+    sum+=tab[i];
+  }
+
+  if(sum == max){
+
+    for(int i=0;i<n;i++){
+      if(tab[i]){
+        fprintf(f,"%d ", i+1);
+      }
+
+    }
+    fprintf(f, "0\n");
+    *nb_clause = *nb_clause+1;
+    return;
+  }
+
+  if(k == n){
+      return;
+  }
+  else{
+
+    tab[k] = 0;
+    combinaison_lineaire_recursive(tab,k+1,n,max,f,nb_clause);
+
+    tab[k] = 1;
+    combinaison_lineaire_recursive(tab,k+1,n,max,f,nb_clause);
+  }
+}
+
+int combinaison_lineaire(int k, int n, FILE *f,int *nb_clause){
+  int tab[n];
+  for(int i=0;i<k;i++){
+    tab[i] = 0;
+  }
+
+
+
+  combinaison_lineaire_recursive(tab,0,n,k,f,nb_clause);
+
+
+
+}
+
 void stable2Sat(Graph *g, int k){
   FILE *out = NULL;
+
 
   out = fopen(FILE_OUT,"w+");
 
@@ -42,7 +94,7 @@ void stable2Sat(Graph *g, int k){
   }
 
   int nb_var_prop = g->n;
-  int nb_clause = g->n;
+  int nb_clause = 0;
 
   /* on écrit la préface de l'instance */
   fprintf(out, "p cnf %d %d \n", nb_var_prop, nb_clause);
@@ -50,14 +102,24 @@ void stable2Sat(Graph *g, int k){
 
   /* pour chaque sommet que l'on prends on ne dois pas prendre les adjaçent */
 
-  fprintf(out, "c chaque sommet si il est choisi on ne dois pas prendre ses adjaçent\n");
+  fprintf(out, "c ccccccccccccccccchaque sommet si il est choisi on ne dois pas prendre ses adjaçent\n");
   for(int i=0;i<g->n;i++){
     fprintf(out, "c sommet %d choisi :\n",i);
     for(int j=0;j<g->n;j++){
-      if(g->a[i][j])
+      if(g->a[i][j]){
         fprintf(out, "-%d -%d 0\n", i+1, j+1);
+        nb_clause++;
+      }
     }
   }
+
+  combinaison_lineaire(g->n-k+1,g->n,out,&nb_clause);
+
+  fseek(out,0,SEEK_SET);
+  fprintf(out, "p cnf %d %d \n", nb_var_prop, nb_clause);
+
+  fclose(out);
+
 
 }
 
