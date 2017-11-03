@@ -15,8 +15,8 @@ int main(int argc, char const *argv[]) {
   Graph* g = malloc(sizeof(Graph));
 
   loadSource(argv[1],g);
-  printGraph("graph_mat",g);
-  graph2Sat(g,atoi(argv[2]));
+  //printGraph("graph_mat",g);
+  stable2Sat(g,atoi(argv[2]));
 
 
   return 0;
@@ -30,6 +30,37 @@ int main(int argc, char const *argv[]) {
 int var_prop(int k, int sommet, int couleur){
   return k*sommet+couleur+1;
 }
+
+void stable2Sat(Graph *g, int k){
+  FILE *out = NULL;
+
+  out = fopen(FILE_OUT,"w+");
+
+  if(out == NULL){
+    printf("impossible d'ecrire dans %s\n", FILE_OUT);
+    exit(0);
+  }
+
+  int nb_var_prop = g->n;
+  int nb_clause = g->n;
+
+  /* on écrit la préface de l'instance */
+  fprintf(out, "p cnf %d %d \n", nb_var_prop, nb_clause);
+
+
+  /* pour chaque sommet que l'on prends on ne dois pas prendre les adjaçent */
+
+  fprintf(out, "c chaque sommet si il est choisi on ne dois pas prendre ses adjaçent\n");
+  for(int i=0;i<g->n;i++){
+    fprintf(out, "c sommet %d choisi :\n",i);
+    for(int j=0;j<g->n;j++){
+      if(g->a[i][j])
+        fprintf(out, "-%d -%d 0\n", i+1, j+1);
+    }
+  }
+
+}
+
 
 void graph2Sat(Graph *g, int k){
 
