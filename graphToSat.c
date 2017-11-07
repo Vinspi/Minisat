@@ -89,16 +89,17 @@ void stable2Sat(Graph *g, int k){
     exit(0);
   }
 
-  int nb_var_prop = g->n + g->n*(k+1);
-  int nb_clause = 0;
 
   /* on écrit la préface de l'instance */
   fprintf(out, "p cnf %d %d     \n", nb_var_prop, nb_clause);
 
 
+
   /* pour chaque sommet que l'on prends on ne dois pas prendre les adjaçent */
 
+
   fprintf(out, "c chaque sommet si il est choisi on ne dois pas prendre ses adjaçent\n");
+
   for(int i=0;i<g->n;i++){
     fprintf(out, "c sommet %d choisi :\n",i);
     for(int j=0;j<g->n;j++){
@@ -108,6 +109,7 @@ void stable2Sat(Graph *g, int k){
       }
     }
   }
+
 
   //combinaison_lineaire(g->n-k+1,g->n,out,&nb_clause);
 
