@@ -22,10 +22,6 @@ int main(int argc, char const *argv[]) {
   return 0;
 }
 
-
-
-
-
 /*
   on défini la formule suivante :
   num_var_prop = k*num_sommet + num_couleur + 1
