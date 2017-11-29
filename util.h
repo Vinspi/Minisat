@@ -22,6 +22,7 @@ typedef struct maillon{
 
 typedef maillon *liste;
 
+int taille_liste(liste l);
 void initGraph(Graph *g, int n);
 void printGraph(char* filename, Graph *g);
 void loadSource(char* filename, Graph *g);

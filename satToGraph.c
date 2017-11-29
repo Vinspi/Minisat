@@ -86,7 +86,6 @@ int sat2graph(Graph *g, const char* filename){
       printf("debut du fichier : \n");
     }
     else {
-
       
       tmp = parseLine(variables_de_clause,buffer);
       for(int i=0;i<tmp-1;i++){
