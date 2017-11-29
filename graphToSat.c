@@ -7,7 +7,7 @@ int main(int argc, char const *argv[]) {
 
   if(argc != 3){
     /* print usage */
-    printf("graphToSat [filename] k-coloration\n");
+    printf("graphToSat [filename] k-stable\n");
     exit(0);
   }
 
@@ -80,6 +80,8 @@ int combinaison_lineaire(int k, int n, FILE *f,int *nb_clause){
 
 void stable2Sat(Graph *g, int k){
   FILE *out = NULL;
+  int nb_var_prop = g->n+g->n*(k+1);
+  int nb_clause = 0;
 
 
   out = fopen(FILE_OUT,"w+");

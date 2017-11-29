@@ -1,7 +1,13 @@
 CC = gcc
 CFLAGS = -std=c99 -w -Wall -g
 
-all: graphToSat satToGraph calcul_maximum
+all: graphToSat satToGraph
+
+graphiqueSatToGraph.o: graphiqueSatToGraph.c
+	$(CC) -o graphiqueSatToGraph.o -c graphiqueSatToGraph.c $(CFLAGS)
+
+graphiqueSatToGraph: util.o calcul_maximum.o graphiqueSatToGraph.o satToGraph.o
+	$(CC) -o graphiqueSatToGraph graphiqueSatToGraph.o util.o calcul_maximum.o satToGraph.o
 
 calcul_maximum.o: calcul_maximum.c
 	$(CC) -o calcul_maximum.o -c calcul_maximum.c $(CFLAGS)
@@ -21,8 +27,8 @@ graphToSat : graphToSat.o util.o
 satToGraph.o : satToGraph.c
 	$(CC) -o satToGraph.o -c satToGraph.c $(CFLAGS)
 
-satToGraph : satToGraph.o util.o calcul_maximum_exact.o
-	$(CC) -o satToGraph satToGraph.o util.o calcul_maximum_exact.o $(CFLAGS)
+satToGraph : satToGraph.o util.o calcul_maximum.o
+	$(CC) -o satToGraph satToGraph.o util.o calcul_maximum.o $(CFLAGS)
 
 
 calcul_maximum_exact.o : calcul_maximum_exact.c

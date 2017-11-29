@@ -1,11 +1,11 @@
 #include "satToGraph.h"
-
+#include "calcul_maximum.h"
 
 int main(int argc, char const *argv[]) {
 
   if(argc != 2){
     /* print usage */
-    printf("staToGraph [filename]\n");
+    printf("satToGraph [filename]\n");
     exit(0);
   }
 
@@ -13,12 +13,12 @@ int main(int argc, char const *argv[]) {
 
   initGraph(g,n_max);
 
-  sat2graph(g,"instance_sat.in");
+  sat2graph(g,argv[1]);
 
   printGraph("out",g);
 
   //Résultat :
-  liste X = calcul_maximum_exact(g)->lx;
+  liste X = calcul_maximum(g);
   printf("Le sous-graphe maximum exact généré est :\n");
   printf_liste(X);
 
@@ -86,7 +86,7 @@ int sat2graph(Graph *g, const char* filename){
       printf("debut du fichier : \n");
     }
     else {
-      
+
       tmp = parseLine(variables_de_clause,buffer);
       for(int i=0;i<tmp-1;i++){
         for(int j=i+1;j<tmp;j++){
