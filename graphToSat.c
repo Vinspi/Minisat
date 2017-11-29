@@ -89,16 +89,17 @@ void stable2Sat(Graph *g, int k){
     exit(0);
   }
 
-  int nb_var_prop = g->n;
-  int nb_clause = 0;
 
   /* on écrit la préface de l'instance */
-  fprintf(out, "p cnf %d %d \n", nb_var_prop, nb_clause);
+  fprintf(out, "p cnf %d %d     \n", nb_var_prop, nb_clause);
+
 
 
   /* pour chaque sommet que l'on prends on ne dois pas prendre les adjaçent */
 
-  fprintf(out, "c ccccccccccccccccchaque sommet si il est choisi on ne dois pas prendre ses adjaçent\n");
+
+  fprintf(out, "c chaque sommet si il est choisi on ne dois pas prendre ses adjaçent\n");
+
   for(int i=0;i<g->n;i++){
     fprintf(out, "c sommet %d choisi :\n",i);
     for(int j=0;j<g->n;j++){
@@ -109,7 +110,46 @@ void stable2Sat(Graph *g, int k){
     }
   }
 
-  combinaison_lineaire(g->n-k+1,g->n,out,&nb_clause);
+
+  //combinaison_lineaire(g->n-k+1,g->n,out,&nb_clause);
+
+  //On "force" maintenant la taille du stable : pour cela, on associe k positions xij uniques à des sommets différents, qui seront les positions dans un stable de taille k. xij = (i)*(k+1)+j. k+1 car k positions plus la position "négative"
+  fprintf(out, "c association des positions\n");
+  for(int i = 0; i < g->n;i++){
+
+      for(int j = 0; j < k+1; j++){    //Boucle de parcours des k+1 positions attribuable au sommet.
+        fprintf(out, "c sommet %d : une seule position %d\n", i+1,j);
+        fprintf(out, "-%d %d 0\n", i*(k+1)+j+1+g->n, i+1);    //Si on positionne un sommet dans le stable, c'est qu'il y appartient.
+        nb_clause++;
+        for(int l = 0; l < k+1; l++){  //Boucle de négations des k autres positions.
+
+          if(j != l){
+            fprintf(out, "-%d -%d 0\n", (i*(k+1)+j+1+g->n), (i*(k+1)+l+1+g->n));
+            nb_clause++;
+          }
+        }
+        fprintf(out, "c sommet %d position %d : pas d'autres sommets ayant cette position\n",i+1,j);
+        for(int a = 0; a < g->n; a++){ //Boucle d'interdictions aux autres sommets de pouvoir utiliser cette position.
+
+            if(i != a){
+              fprintf(out, "-%d -%d 0\n", (i*(k+1)+j+1+g->n),(a*(k+1)+j+1+g->n));
+              nb_clause++;
+            }
+        }
+      }
+
+  }
+
+  //On peut le faire directement dans la boucle, mais pour le moment on divise bien le problème :
+  fprintf(out, "c clauses d'obligations d'attributions des positions\n");
+  for(int j = 1; j < k+1; j++){
+    for(int i = 0; i < g->n; i++){
+        fprintf(out, "%d ", (i*(k+1)+j+1+g->n));
+    }
+    fprintf(out, "0\n");
+    nb_clause++;
+  }
+
 
   fseek(out,0,SEEK_SET);
   fprintf(out, "p cnf %d %d \n", nb_var_prop, nb_clause);

@@ -24,5 +24,6 @@ satToGraph.o : satToGraph.c
 satToGraph : satToGraph.o util.o calcul_maximum_exact.o
 	$(CC) -o satToGraph satToGraph.o util.o calcul_maximum_exact.o $(CFLAGS)
 
+
 calcul_maximum_exact.o : calcul_maximum_exact.c
-	$(CC) -o calcul_maximum_exact.o -c calcul_maximum_exact.c
+	$(CC) -o calcul_maximum_exact.o -c calcul_maximum_exact.c $(CFLAGS)
